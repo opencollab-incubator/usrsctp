@@ -4243,6 +4243,24 @@ sctp_express_handle_sack(struct sctp_tcb *stcb, uint32_t cumack,
 	if (asoc->peers_rwnd > old_rwnd) {
 		win_probe_recovery = 1;
 	}
+	/*
+	 * The cumulative ack moved (an unchanged one returned or jumped to
+	 * again: above), so restart T3 like sctp_handle_sack() does: stop it
+	 * here, and the loop below starts it again where data is in flight.
+	 */
+	if (asoc->sctp_cmt_on_off > 0) {
+		TAILQ_FOREACH(net, &asoc->nets, sctp_next) {
+			if (net->new_pseudo_cumack)
+				sctp_timer_stop(SCTP_TIMER_TYPE_SEND, stcb->sctp_ep,
+				                stcb, net,
+				                SCTP_FROM_SCTP_INDATA + SCTP_LOC_31);
+		}
+	} else {
+		TAILQ_FOREACH(net, &asoc->nets, sctp_next) {
+			sctp_timer_stop(SCTP_TIMER_TYPE_SEND, stcb->sctp_ep,
+			                stcb, net, SCTP_FROM_SCTP_INDATA + SCTP_LOC_32);
+		}
+	}
 	/* Now assure a timer where data is queued at */
 again:
 	j = 0;
