@@ -10497,6 +10497,7 @@ sctp_chunk_retransmission(struct sctp_inpcb *inp,
 			}
 			for (i = 0; i < bundle_at; i++) {
 				SCTP_STAT_INCR(sctps_sendretransdata);
+				asoc->retransmitted_chunks++;
 				data_list[i]->sent = SCTP_DATAGRAM_SENT;
 				/*
 				 * When we have a revoked data, and we
@@ -10550,6 +10551,7 @@ sctp_chunk_retransmission(struct sctp_inpcb *inp,
 				if ((i == 0) &&
 				    (data_list[i]->rec.data.doing_fast_retransmit)) {
 					SCTP_STAT_INCR(sctps_sendfastretrans);
+					asoc->fast_retransmits++;
 					if ((data_list[i] == TAILQ_FIRST(&asoc->sent_queue)) &&
 					    (tmr_started == 0)) {
 						/*-

@@ -1268,6 +1268,14 @@ struct sctp_association {
 	uint32_t marked_retrans;
 	uint32_t timoinit;
 	uint32_t timodata;
+	/*
+	 * The association's share of the global sctps_ counters that tell
+	 * how its data was recovered, for SCTP_ASSOC_RECOVERY.
+	 */
+	uint32_t fast_retransmits;        /* packets sent by fast retransmit */
+	uint32_t retransmitted_chunks;    /* DATA chunks sent again, either way */
+	uint32_t gap_sacks;               /* SACKs that reported gaps */
+	uint32_t duplicate_tsns_received; /* DATA chunks received twice */
 	uint32_t timosack;
 	uint32_t timoshutdown;
 	uint32_t timoheartbeat;

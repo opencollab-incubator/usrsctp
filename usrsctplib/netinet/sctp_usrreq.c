@@ -3435,6 +3435,26 @@ sctp_getopt(struct socket *so, int optname, void *optval, size_t *optsize,
 		}
 		break;
 	}
+	case SCTP_ASSOC_RECOVERY:
+	{
+		struct sctp_assoc_recovery *sar;
+
+		SCTP_CHECK_AND_CAST(sar, optval, struct sctp_assoc_recovery, *optsize);
+		SCTP_FIND_STCB(inp, stcb, sar->sar_assoc_id);
+
+		if (stcb) {
+			sar->sar_fast_retransmits = stcb->asoc.fast_retransmits;
+			sar->sar_retransmitted_chunks = stcb->asoc.retransmitted_chunks;
+			sar->sar_gap_sacks = stcb->asoc.gap_sacks;
+			sar->sar_duplicate_tsns_received = stcb->asoc.duplicate_tsns_received;
+			SCTP_TCB_UNLOCK(stcb);
+			*optsize = sizeof(struct sctp_assoc_recovery);
+		} else {
+			SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_USRREQ, EINVAL);
+			error = EINVAL;
+		}
+		break;
+	}
 	case SCTP_TIMEOUTS:
 	{
 		struct sctp_timeouts *stimo;

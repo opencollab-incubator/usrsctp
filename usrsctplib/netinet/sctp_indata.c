@@ -1756,6 +1756,7 @@ sctp_process_a_data_chunk(struct sctp_tcb *stcb, struct sctp_association *asoc,
 	if (SCTP_TSN_GE(asoc->cumulative_tsn, tsn)) {
 		/* It is a duplicate */
 		SCTP_STAT_INCR(sctps_recvdupdata);
+		asoc->duplicate_tsns_received++;
 		if (asoc->numduptsns < SCTP_MAX_DUP_TSNS) {
 			/* Record a dup for the next outbound sack */
 			asoc->dup_tsns[asoc->numduptsns] = tsn;
@@ -1784,6 +1785,7 @@ sctp_process_a_data_chunk(struct sctp_tcb *stcb, struct sctp_association *asoc,
 	if (SCTP_IS_TSN_PRESENT(asoc->mapping_array, gap) ||
 	    SCTP_IS_TSN_PRESENT(asoc->nr_mapping_array, gap)) {
 		SCTP_STAT_INCR(sctps_recvdupdata);
+		asoc->duplicate_tsns_received++;
 		if (asoc->numduptsns < SCTP_MAX_DUP_TSNS) {
 			/* Record a dup for the next outbound sack */
 			asoc->dup_tsns[asoc->numduptsns] = tsn;
@@ -4486,6 +4488,7 @@ sctp_handle_sack(struct mbuf *m, int offset_seg, int offset_dup,
 	/* CMT DAC algo */
 	this_sack_lowest_newack = 0;
 	SCTP_STAT_INCR(sctps_slowpath_sack);
+	stcb->asoc.gap_sacks++;
 	last_tsn = cum_ack;
 	cmt_dac_flag = flags & SCTP_SACK_CMT_DAC;
 #ifdef SCTP_ASOCLOG_OF_TSNS

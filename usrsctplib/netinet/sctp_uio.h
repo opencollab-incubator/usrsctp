@@ -742,6 +742,15 @@ struct sctp_timeouts {
 	uint32_t stimo_shutdownack;
 };
 
+/* How an association's data was recovered, read with SCTP_ASSOC_RECOVERY */
+struct sctp_assoc_recovery {
+	sctp_assoc_t sar_assoc_id;
+	uint32_t sar_fast_retransmits;
+	uint32_t sar_retransmitted_chunks;
+	uint32_t sar_gap_sacks;
+	uint32_t sar_duplicate_tsns_received;
+};
+
 struct sctp_udpencaps {
 	struct sockaddr_storage sue_address;
 	sctp_assoc_t sue_assoc_id;
